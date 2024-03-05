@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
                       },
                       child: Image.asset(
                         'assets/kontynuuj_button.png',
-                        width: 700,
+                        width: 300,
                         height: 300,
                       ),
                     ),
