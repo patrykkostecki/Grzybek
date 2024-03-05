@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:grzybek/login_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,77 +10,75 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: SideBar(),
-      ),
-    );
-  }
-}
-
-class SideBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[200], // Tło całego ekranu
-      child: Row(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Przypięcie do lewej strony
-            children: <Widget>[
-              SizedBox(
-                height: 130,
+      title: 'GRZYBEK!',
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.png"),
+                fit: BoxFit.cover,
               ),
-              SidebarButton(label: 'Rozpoznawanie', width: 300),
-              SidebarButton(label: 'Encyklopedia', width: 250),
-              SidebarButton(label: 'Kolekcja', width: 200),
-              SidebarButton(label: 'Forum', width: 150),
-              SidebarButton(label: 'Mapy', width: 100),
-            ],
-          ),
-          Expanded(
-            child: Container(
-              // Pozostała część ekranu
-              color: Colors.transparent,
+            ),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SvgPicture.asset(
+                      'assets/LOGO.svg',
+                      width: 256,
+                      height: 256,
+                    ),
+                    // SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "UWAGA!",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18.0, vertical: 0.1),
+                      child: Text(
+                        "Ta aplikacja służy wyłącznie do celów informacyjnych i edukacyjnych. "
+                        "Nie należy jej używać jako jedynego narzędzia do identyfikacji grzybów. "
+                        "Rozpoznawanie grzybów jest skomplikowanym procesem i błędna identyfikacja może prowadzić do poważnych konsekwencji zdrowotnych, w tym zatruć. "
+                        "Zawsze korzystaj z usług wykwalifikowanych ekspertów mykologicznych lub odpowiednich przewodników. "
+                        "Twórcy aplikacji nie biorą odpowiedzialności za żadne szkody wynikające z użycia aplikacji, w tym za niewłaściwe zidentyfikowanie grzybów. "
+                        "Użytkownik aplikacji robi to na własne ryzyko.",
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    // SizedBox(height: 0),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SecondScreen()),
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/kontynuuj_button.png',
+                        width: 700,
+                        height: 300,
+                      ),
+                    ),
+                    // SizedBox(height: 0),
+                  ],
+                ),
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class SidebarButton extends StatelessWidget {
-  final String label;
-  final double width;
-
-  const SidebarButton({Key? key, required this.label, required this.width})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: 50, // Ustaw wysokość przycisków
-      padding:
-          EdgeInsets.only(bottom: 8.0), // Dodaj odstęp od dolnego przycisku
-      child: TextButton(
-        onPressed: () {
-          print('Naciśnięto: $label');
-        },
-        style: TextButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.amber, // Kolor tekstu przycisku
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(
-              horizontal:
-                  16.0), // Wewnętrzny odstęp tekstu od krawędzi przycisku
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, // Usunięcie zaokrągleń
-          ),
         ),
-        child: Text(label, textAlign: TextAlign.left),
       ),
     );
   }
