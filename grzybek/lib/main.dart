@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'GRZYBEK!',
       home: Builder(
         builder: (context) => Scaffold(
+          appBar: CustomAppBar(),
           body: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -25,11 +26,6 @@ class MyApp extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    SvgPicture.asset(
-                      'assets/LOGO.svg',
-                      width: 256,
-                      height: 256,
-                    ),
                     // SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -79,6 +75,55 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class LogoHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10), // Adjust padding as needed
+      child: SvgPicture.asset(
+        'assets/LOGO.svg',
+        width: 120, // Adjust the size according to your needs
+      ),
+    );
+  }
+}
+
+PreferredSizeWidget logoAppBar() {
+  return AppBar(
+    centerTitle: true,
+    backgroundColor: Colors.transparent, // Transparentny kolor tła AppBar
+    elevation: 0, // Usunięcie cienia AppBar
+    title: SvgPicture.asset(
+      'assets/LOGO.svg',
+      width: 120, // Dostosuj szerokość do swoich potrzeb
+    ),
+  );
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  final Size preferredSize; // dodaj to
+
+  CustomAppBar({
+    Key? key,
+  })  : preferredSize =
+            Size.fromHeight(70.0), // Tutaj ustaw preferowaną wysokość AppBar
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      backgroundColor: Color.fromRGBO(246, 216, 187, 1.0),
+      elevation: 0,
+      title: SvgPicture.asset(
+        'assets/LOGO.svg',
+        height: 130, // Dostosuj wysokość logo, jeśli potrzeba
       ),
     );
   }
