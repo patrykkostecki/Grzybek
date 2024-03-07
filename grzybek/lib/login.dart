@@ -30,8 +30,12 @@ class Login extends StatelessWidget {
                     labelText: 'Hasło', border: OutlineInputBorder()),
                 obscureText: true,
               ),
-              SizedBox(height: 100),
-              ElevatedButton(
+              SizedBox(
+                height: 30,
+              ),
+              TextButton(onPressed: () {}, child: Text('Zapomniałem hasła')),
+              SizedBox(height: 70),
+              TextButton(
                   onPressed: () {},
                   child: Text('Zaloguj'),
                   style: ButtonStyle(
