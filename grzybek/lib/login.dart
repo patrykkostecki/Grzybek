@@ -7,6 +7,12 @@ class Login extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(),
       body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/Login_Background.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
           padding: EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

@@ -22,15 +22,10 @@ class SecondScreen extends StatelessWidget {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "WITAJ!",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
+                  Image.asset(
+                    'assets/Login.png',
+                    width: 200,
+                    height: 200,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -39,12 +34,12 @@ class SecondScreen extends StatelessWidget {
                       "Zaloguj się do aplikacji Grzybek aby mieć dostęp do wiekszych mozliwosci!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 14,
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 25,
                   ),
                   TextButton(
                     style: ButtonStyle(
