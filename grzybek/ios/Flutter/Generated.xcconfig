@@ -1,8 +1,8 @@
 // This is a generated file; do not edit or check into version control.
 FLUTTER_ROOT=/Users/a1234/Downloads/flutter
-FLUTTER_APPLICATION_PATH=/Users/a1234/Desktop/Grzybek/grzybek
+FLUTTER_APPLICATION_PATH=/Users/a1234/Desktop/Grzybek/Grzybek/grzybek
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=/Users/a1234/Desktop/Grzybek/grzybek/lib/main.dart
+FLUTTER_TARGET=/Users/a1234/Desktop/Grzybek/Grzybek/grzybek/lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
@@ -12,4 +12,4 @@ DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/a1234/Desktop/Grzybek/grzybek/.dart_tool/package_config.json
+PACKAGE_CONFIG=/Users/a1234/Desktop/Grzybek/Grzybek/grzybek/.dart_tool/package_config.json
