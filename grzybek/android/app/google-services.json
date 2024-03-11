@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "103917313431",
-    "project_id": "grzybek-afd00",
-    "storage_bucket": "grzybek-afd00.appspot.com"
+    "project_number": "344661659169",
+    "project_id": "grzybek-36563",
+    "storage_bucket": "grzybek-36563.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:103917313431:android:28f03de0f29d0f0a3ab8d2",
+        "mobilesdk_app_id": "1:344661659169:android:9bce228731d94910fadd60",
         "android_client_info": {
           "package_name": "com.example.grzybek"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB1cK5tEcYa2qPpD5Vc8rRvlTJBCAjONpo"
+          "current_key": "AIzaSyDwtAj94wch1bYaGMjLXeFT7JVPvUFTyG0"
         }
       ],
       "services": {

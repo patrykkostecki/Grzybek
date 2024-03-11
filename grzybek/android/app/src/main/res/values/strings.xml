@@ -1,0 +1,10 @@
+<resources>
+    <string name="google_app_id">1:344661659169:android:9bce228731d94910fadd60</string>
+    <string name="gcm_defaultSenderId">344661659169</string>
+    <string name="default_web_client_id">[WEB_CLIENT_ID_TUTAJ]</string>
+    <string name="ga_trackingId">[TRACKING_ID_TUTAJ]</string>
+    <string name="firebase_database_url">https://grzybek-36563.firebaseio.com</string>
+    <string name="google_api_key">AIzaSyBgEph8aRZMgwIwaI3Ot92D-84uXL9DAok</string>
+    <string name="google_crash_reporting_api_key">[CRASH_REPORTING_KEY_TUTAJ]</string>
+    <string name="project_id">grzybek-36563</string>
+</resources>

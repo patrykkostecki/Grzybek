@@ -20,7 +20,7 @@ class User {
     };
   }
 
-  // konwersja z mapy (przy odczycie z bazy)
+  // Konwersja
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['id'],
