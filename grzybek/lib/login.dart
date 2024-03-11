@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grzybek/database/database_helper.dart';
 import 'package:grzybek/main.dart';
@@ -14,24 +15,35 @@ class _LoginState extends State<Login> {
 
   void _loginUser() async {
     print("Próba logowania...");
-    String username = _usernameController.text;
-    String password = _passwordController.text;
+    String email =
+        _usernameController.text.trim(); // Upewnij się, że jest to e-mail
+    String password = _passwordController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Żadne pole nie może być puste')),
       );
       return; // Przerwanie funkcji, jeśli jakiekolwiek pole jest puste
     }
-    var user = await DatabaseHelper.instance.loginUser(username, password);
-    if (user != null) {
-      print("Logowanie udane, przechodzenie do SecondScreen...");
+
+    try {
+      // Użyj FirebaseAuth do logowania
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Jeśli nie zostanie rzucony wyjątek, logowanie jest udane
+      print("Logowanie udane, przechodzenie do MenuScreen...");
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => MenuScreen())); // Przekierowanie
-    } else {
-      print("Logowanie nieudane.");
+    } on FirebaseAuthException catch (e) {
+      // Obsługa błędów logowania
+      print("Logowanie nieudane. Błąd: ${e.message}");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Niepoprawny login lub hasło.')));
+        SnackBar(content: Text('Logowanie nieudane: ${e.message}')),
+      );
     }
   }
 
@@ -56,7 +68,7 @@ class _LoginState extends State<Login> {
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
-                    labelText: 'Login', border: OutlineInputBorder()),
+                    labelText: 'Email', border: OutlineInputBorder()),
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: 30),

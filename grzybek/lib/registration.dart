@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grzybek/database/database_helper.dart';
 import 'package:grzybek/database/user.dart';
@@ -19,9 +20,10 @@ class _RegistrationState extends State<Registration> {
   void _registerUser() async {
     final String username = _usernameController.text.trim();
     final String email = _emailController.text.trim();
-    final String password = _passwordController.text;
-    final String repeatPassword = _repeatPasswordController.text;
+    final String password = _passwordController.text.trim();
+    final String repeatPassword = _repeatPasswordController.text.trim();
 
+    // Sprawdzenie, czy żadne pole nie jest puste
     if (username.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
@@ -29,26 +31,45 @@ class _RegistrationState extends State<Registration> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Żadne pole nie może być puste')),
       );
-      return; // Przerwanie funkcji, jeśli jakiekolwiek pole jest puste
+      return;
     }
 
+    // Sprawdzenie, czy hasła są takie same
     if (password != repeatPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hasła się nie zgadzają')),
       );
-      return; // Przerwanie funkcji, jeśli hasła nie są identyczne
+      return;
     }
 
-    // Utwórz instancję użytkownika
-    final user = User(username: username, email: email, password: password);
-    // Zapisz użytkownika w bazie danych
-    await DatabaseHelper.instance.createUser(user);
+    // Użycie Firebase Authentication do utworzenia nowego użytkownika
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => SecondScreen())); // Przekierowanie
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Rejestracja się powiodła')),
-    );
+      // Możesz także chcieć zapisywać dodatkowe dane użytkownika, jak nazwę użytkownika
+      // Tutaj możesz to zrobić, ale upewnij się, że masz odpowiednią strukturę bazy danych Firestore
+      // await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).set({
+      //   'username': username,
+      //   'email': email,
+      //   // inne potrzebne dane
+      // });
+
+      // Przekierowanie po pomyślnej rejestracji
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => SecondScreen()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Rejestracja się powiodła')),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Rejestracja nieudana: ${e.message}')),
+      );
+    }
   }
 
   @override
