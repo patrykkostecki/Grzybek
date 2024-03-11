@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grzybek/database/database_helper.dart';
-import 'package:grzybek/database/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grzybek/login_screen.dart';
-import 'package:grzybek/main.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -29,26 +28,54 @@ class _RegistrationState extends State<Registration> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Żadne pole nie może być puste')),
       );
-      return; // Przerwanie funkcji, jeśli jakiekolwiek pole jest puste
+      return;
     }
 
     if (password != repeatPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hasła się nie zgadzają')),
       );
-      return; // Przerwanie funkcji, jeśli hasła nie są identyczne
+      return;
     }
 
-    // Utwórz instancję użytkownika
-    final user = User(username: username, email: email, password: password);
-    // Zapisz użytkownika w bazie danych
-    await DatabaseHelper.instance.createUser(user);
+    try {
+      // Używamy Firebase Authentication do rejestracji użytkownika
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => SecondScreen())); // Przekierowanie
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Rejestracja się powiodła')),
-    );
+      // Zapisz dodatkowe informacje o użytkowniku w Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user?.uid)
+          .set({
+        'username': username,
+        'email': email,
+        // Nie zapisuj haseł w bazie danych! Zostają one bezpiecznie zarządzane przez FirebaseAuth
+      });
+
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => SecondScreen()));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Rejestracja się powiodła')),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = 'Wystąpił błąd przy rejestracji';
+      if (e.code == 'weak-password') {
+        message = 'Podane hasło jest za słabe.';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'Konto z tym adresem email już istnieje.';
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Wystąpił błąd przy rejestracji')),
+      );
+    }
   }
 
   @override
@@ -63,65 +90,64 @@ class _RegistrationState extends State<Registration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: AppBar(title: Text('Rejestracja')),
       body: Container(
-          padding: EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(padding: EdgeInsets.only(top: 50)),
-                TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nazwa użytkownika',
-                    border: OutlineInputBorder(),
-                  ),
+        padding: EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(padding: EdgeInsets.only(top: 50)),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  labelText: 'Nazwa użytkownika',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(height: 30),
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 30),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(
-                  height: 30,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 30),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Hasło',
+                  border: OutlineInputBorder(),
                 ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                      labelText: 'Hasło', border: OutlineInputBorder()),
-                  obscureText: true,
+                obscureText: true,
+              ),
+              SizedBox(height: 30),
+              TextField(
+                controller: _repeatPasswordController,
+                decoration: InputDecoration(
+                  labelText: 'Powtórz hasło',
+                  border: OutlineInputBorder(),
                 ),
-                SizedBox(
-                  height: 30,
+                obscureText: true,
+              ),
+              SizedBox(height: 70),
+              TextButton(
+                onPressed: _registerUser,
+                child: Text('Zarejestruj'),
+                style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.brown),
                 ),
-                TextField(
-                  controller: _repeatPasswordController,
-                  decoration: InputDecoration(
-                      labelText: 'Powtórz hasło', border: OutlineInputBorder()),
-                  obscureText: true,
-                ),
-                SizedBox(
-                  height: 70,
-                ),
-                TextButton(
-                  onPressed: _registerUser,
-                  child: Text('Zarejestruj'),
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.brown),
-                  ),
-                ),
-              ],
-            ),
-          )),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
