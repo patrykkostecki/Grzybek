@@ -1,43 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:grzybek/main.dart';
+import 'package:grzybek/bottom_navigatiton_bar.dart';
+import 'package:grzybek/main.dart'; // Upewnij się, że tutaj są właściwe ścieżki
+import 'mapa.dart'; // Importuj MapaScreen z właściwego pliku
 
 class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Builder(
-      builder: (context) => Scaffold(
-          appBar: CustomAppBar(),
-          body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/background.png"),
-                fit: BoxFit.cover,
-              ),
+    return Scaffold(
+      appBar:
+          CustomAppBar(), // CustomAppBar powinien być zdefiniowany w innym miejscu
+      extendBody: true,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background_menu.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('KLASYFIKACJA GRZYBA'),
+                // Reszta treści
+              ],
             ),
-            child: Center(
-                child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                  Image.asset(
-                    'assets/Login.png',
-                    width: 200,
-                    height: 200,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 18.0, vertical: 0.1),
-                    child: Text(
-                      "Pomyślnie zalogowano",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
-                    ),
-                  ),
-                ]))),
-          )),
-    ));
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomAppBar(
+        selectedIndex: 2, // Tutaj ustawiasz indeks dla strony MenuScreen
+      ),
+    );
   }
 }
