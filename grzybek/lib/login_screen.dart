@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grzybek/HomeView.dart';
 import 'package:grzybek/main.dart';
 import 'package:grzybek/login.dart';
 import 'package:grzybek/registration.dart';
@@ -82,7 +83,12 @@ class SecondScreen extends StatelessWidget {
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.black),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeView()),
+                      );
+                    },
                     child: Text('Kontunuuj bez logowania'),
                   )
                 ]))),
