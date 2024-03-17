@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:grzybek/HomeView.dart';
 import 'package:grzybek/database/database_helper.dart';
 import 'package:grzybek/main.dart';
-import 'package:grzybek/menu.dart';
+import 'package:grzybek/HomeView.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _LoginState extends State<Login> {
       // Jeśli nie zostanie rzucony wyjątek, logowanie jest udane
       print("Logowanie udane, przechodzenie do MenuScreen...");
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => MenuScreen())); // Przekierowanie
+          MaterialPageRoute(builder: (_) => HomeView())); // Przekierowanie
     } on FirebaseAuthException catch (e) {
       // Obsługa błędów logowania
       print("Logowanie nieudane. Błąd: ${e.message}");
