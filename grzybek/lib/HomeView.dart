@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grzybek/main.dart';
+import 'package:grzybek/mushroom_classifation.dart';
 
 final bottomNavIndexProvider = StateProvider((ref) => 0);
 
@@ -110,9 +111,16 @@ class HomeView extends StatelessWidget {
                           icon: Icon(Icons.forest_outlined), label: 'Mapa'),
                     ],
                     onDestinationSelected: (value) {
-                      ref
-                          .read(bottomNavIndexProvider.notifier)
-                          .update((state) => value);
+                      if (value == 2) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ClassifierScreen()));
+                      } else {
+                        ref
+                            .read(bottomNavIndexProvider.notifier)
+                            .update((state) => value);
+                      }
                     },
                   ),
                 ),
