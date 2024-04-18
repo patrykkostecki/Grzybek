@@ -22,7 +22,12 @@ class _ClassifierScreenState extends State<ClassifierScreen> {
   }
 
   Future<void> loadModel() async {
-    interpreter = await Interpreter.fromAsset('assets/model.tflite');
+    try {
+      interpreter = await Interpreter.fromAsset('assets/model.tflite');
+      print("Załadowano model");
+    } catch (e) {
+      print("Błąd ładowania modelu: $e");
+    }
   }
 
   Future<void> pickImage() async {
@@ -37,16 +42,46 @@ class _ClassifierScreenState extends State<ClassifierScreen> {
     }
   }
 
+  Uint8List imageToByteListUint8(img.Image image, int inputSize) {
+    var convertedBytes = Uint8List(inputSize * inputSize * 3);
+    int pixelIndex = 0;
+    for (var i = 0; i < inputSize; i++) {
+      for (var j = 0; j < inputSize; j++) {
+        var pixel = image.getPixel(j, i);
+        convertedBytes[pixelIndex++] = img.getRed(pixel);
+        convertedBytes[pixelIndex++] = img.getGreen(pixel);
+        convertedBytes[pixelIndex++] = img.getBlue(pixel);
+      }
+    }
+    return convertedBytes;
+  }
+
   Future<void> classifyImage() async {
     if (_image != null) {
-      var imageBytes = img.decodeImage(File(_image!.path).readAsBytesSync())!;
-      var resizedImage = img.copyResize(imageBytes, width: 224, height: 224);
-      var input = imageToByteListFloat32(resizedImage, 224, 127.5, 127.5);
-      var output = List.filled(1 * 2, 0).reshape([1, 2]);
-      interpreter.run(input, output);
-      setState(() {
-        _classificationResults = output;
-      });
+      try {
+        var imageBytes = await File(_image!.path).readAsBytes();
+        var image = img.decodeImage(imageBytes);
+        if (image != null) {
+          var resizedImage = img.copyResize(image, width: 224, height: 224);
+
+          // Przekształcenie obrazu do formatu akceptowanego przez model
+          var input = imageToByteListUint8(resizedImage, 224);
+          var output = List.filled(1 * 8, 0)
+              .reshape([1, 8]); // Zaktualizowany rozmiar tensora wyjściowego
+
+          // Uruchomienie modelu
+          interpreter.run(input, output);
+
+          // Aktualizacja UI
+          setState(() {
+            _classificationResults = output;
+          });
+        } else {
+          print("Problem with decoding the image");
+        }
+      } catch (e) {
+        print('Error during image classification: $e');
+      }
     }
   }
 
