@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
@@ -13,20 +14,40 @@ class ClassifierScreen extends StatefulWidget {
 class _ClassifierScreenState extends State<ClassifierScreen> {
   File? _image;
   List<dynamic>? _classificationResults;
-  late Interpreter interpreter;
+  Interpreter? interpreter; // Make it nullable to handle initialization failure
+  List<String> labels = [];
+  bool isModelLoaded = false; // Flag to check if model is loaded
 
   @override
   void initState() {
     super.initState();
-    loadModel();
+    loadModel().then((_) {
+      setState(() {
+        isModelLoaded = true; // Set the flag to true once model is loaded
+      });
+    });
+    loadLabels();
+  }
+
+  Future<void> loadLabels() async {
+    try {
+      final labelData = await rootBundle.loadString('assets/Labels/labels.txt');
+      setState(() {
+        labels =
+            labelData.split('\n').where((label) => label.isNotEmpty).toList();
+      });
+    } catch (e) {
+      print("Error loading labels: $e");
+    }
   }
 
   Future<void> loadModel() async {
     try {
-      interpreter = await Interpreter.fromAsset('assets/model.tflite');
-      print("Załadowano model");
+      interpreter =
+          await Interpreter.fromAsset('assets/models/model_unquant.tflite');
+      print("Model loaded");
     } catch (e) {
-      print("Błąd ładowania modelu: $e");
+      print("Error loading model: $e");
     }
   }
 
@@ -42,39 +63,37 @@ class _ClassifierScreenState extends State<ClassifierScreen> {
     }
   }
 
-  Uint8List imageToByteListUint8(img.Image image, int inputSize) {
-    var convertedBytes = Uint8List(inputSize * inputSize * 3);
+  Uint8List imageToByteListFloat32(img.Image image) {
+    var convertedBytes = Uint8List(4 * 224 * 224 * 3);
+    var buffer = Float32List.view(convertedBytes.buffer);
     int pixelIndex = 0;
-    for (var i = 0; i < inputSize; i++) {
-      for (var j = 0; j < inputSize; j++) {
+    for (var i = 0; i < 224; i++) {
+      for (var j = 0; j < 224; j++) {
         var pixel = image.getPixel(j, i);
-        convertedBytes[pixelIndex++] = img.getRed(pixel);
-        convertedBytes[pixelIndex++] = img.getGreen(pixel);
-        convertedBytes[pixelIndex++] = img.getBlue(pixel);
+        buffer[pixelIndex++] = (img.getRed(pixel) / 255.0);
+        buffer[pixelIndex++] = (img.getGreen(pixel) / 255.0);
+        buffer[pixelIndex++] = (img.getBlue(pixel) / 255.0);
       }
     }
     return convertedBytes;
   }
 
   Future<void> classifyImage() async {
-    if (_image != null) {
+    if (_image != null && interpreter != null) {
       try {
         var imageBytes = await File(_image!.path).readAsBytes();
         var image = img.decodeImage(imageBytes);
         if (image != null) {
           var resizedImage = img.copyResize(image, width: 224, height: 224);
+          var input = imageToByteListFloat32(resizedImage);
+          var output = List.filled(1 * 12, 0).reshape([1, 12]);
 
-          // Przekształcenie obrazu do formatu akceptowanego przez model
-          var input = imageToByteListUint8(resizedImage, 224);
-          var output = List.filled(1 * 8, 0)
-              .reshape([1, 8]); // Zaktualizowany rozmiar tensora wyjściowego
+          interpreter!.run(input, output);
 
-          // Uruchomienie modelu
-          interpreter.run(input, output);
-
-          // Aktualizacja UI
           setState(() {
-            _classificationResults = output;
+            _classificationResults = output[0].asMap().entries.map((e) {
+              return '${labels[e.key]}: ${(e.value * 100).toStringAsFixed(2)}%';
+            }).toList();
           });
         } else {
           print("Problem with decoding the image");
@@ -82,41 +101,41 @@ class _ClassifierScreenState extends State<ClassifierScreen> {
       } catch (e) {
         print('Error during image classification: $e');
       }
+    } else {
+      print('Interpreter not initialized or no image selected.');
     }
-  }
-
-  Uint8List imageToByteListFloat32(
-      img.Image image, int inputSize, double mean, double std) {
-    var convertedBytes = Uint8List(4 * inputSize * inputSize * 3);
-    var buffer = Float32List.view(convertedBytes.buffer);
-    int pixelIndex = 0;
-    for (var i = 0; i < inputSize; i++) {
-      for (var j = 0; j < inputSize; j++) {
-        var pixel = image.getPixel(j, i);
-        buffer[pixelIndex++] = (img.getRed(pixel) - mean) / std;
-        buffer[pixelIndex++] = (img.getGreen(pixel) - mean) / std;
-        buffer[pixelIndex++] = (img.getBlue(pixel) - mean) / std;
-      }
-    }
-    return convertedBytes;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mushroom Classifier')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _image == null ? Text('No image selected.') : Image.file(_image!),
-          ElevatedButton(
-            onPressed: pickImage,
-            child: Text('Pick Image'),
-          ),
-          _classificationResults == null
-              ? Text('No results yet.')
-              : Text('Results: $_classificationResults'),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (_image != null)
+              Container(
+                height: 200.0,
+                width: double.infinity,
+                child: Image.file(
+                  _image!,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else
+              Text('No image selected.'),
+            ElevatedButton(
+              onPressed: isModelLoaded
+                  ? pickImage
+                  : null, // Disable button until model is loaded
+              child: Text('Pick Image'),
+            ),
+            _classificationResults == null
+                ? Text('No results yet.')
+                : Text('Results: $_classificationResults'),
+          ],
+        ),
       ),
     );
   }
