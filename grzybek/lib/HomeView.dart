@@ -28,25 +28,11 @@ class HomeView extends StatelessWidget {
             final currentIndex = ref.watch(bottomNavIndexProvider);
             return IndexedStack(
               index: currentIndex,
-              children: const [
-                Center(
-                  child: Icon(
-                    Icons.home,
-                    size: 100,
-                  ),
-                ),
-                Center(
-                  child: Icon(
-                    Icons.settings,
-                    size: 100,
-                  ),
-                ),
-                Center(
-                  child: Icon(
-                    Icons.account_box,
-                    size: 100,
-                  ),
-                ),
+              children: [
+                Center(child: Icon(Icons.home, size: 100)),
+                Center(child: Icon(Icons.settings, size: 100)),
+                ClassifierWidget(), // Tutaj umieszczasz widget rozpoznawania
+                Center(child: Icon(Icons.account_box, size: 100)),
                 // Możesz dodać więcej dzieci jeśli potrzebujesz
               ],
             );
@@ -111,16 +97,9 @@ class HomeView extends StatelessWidget {
                           icon: Icon(Icons.forest_outlined), label: 'Mapa'),
                     ],
                     onDestinationSelected: (value) {
-                      if (value == 2) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ClassifierScreen()));
-                      } else {
-                        ref
-                            .read(bottomNavIndexProvider.notifier)
-                            .update((state) => value);
-                      }
+                      ref
+                          .read(bottomNavIndexProvider.notifier)
+                          .update((state) => value);
                     },
                   ),
                 ),

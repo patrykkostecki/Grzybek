@@ -6,24 +6,24 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
 
-class ClassifierScreen extends StatefulWidget {
+class ClassifierWidget extends StatefulWidget {
   @override
-  _ClassifierScreenState createState() => _ClassifierScreenState();
+  _ClassifierWidgetState createState() => _ClassifierWidgetState();
 }
 
-class _ClassifierScreenState extends State<ClassifierScreen> {
+class _ClassifierWidgetState extends State<ClassifierWidget> {
   File? _image;
   List<dynamic>? _classificationResults;
-  Interpreter? interpreter; // Make it nullable to handle initialization failure
+  Interpreter? interpreter;
   List<String> labels = [];
-  bool isModelLoaded = false; // Flag to check if model is loaded
+  bool isModelLoaded = false;
 
   @override
   void initState() {
     super.initState();
     loadModel().then((_) {
       setState(() {
-        isModelLoaded = true; // Set the flag to true once model is loaded
+        isModelLoaded = true;
       });
     });
     loadLabels();
@@ -108,35 +108,73 @@ class _ClassifierScreenState extends State<ClassifierScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Mushroom Classifier')),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (_image != null)
-              Container(
-                height: 200.0,
-                width: double.infinity,
-                child: Image.file(
-                  _image!,
-                  fit: BoxFit.cover,
-                ),
-              )
-            else
-              Text('No image selected.'),
-            ElevatedButton(
-              onPressed: isModelLoaded
-                  ? pickImage
-                  : null, // Disable button until model is loaded
-              child: Text('Pick Image'),
-            ),
-            _classificationResults == null
-                ? Text('No results yet.')
-                : Text('Results: $_classificationResults'),
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          height: 50,
         ),
-      ),
+        if (_image != null)
+          Container(
+            height: 300,
+            width: 300,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: const Color.fromARGB(255, 0, 25, 46),
+                width: 2.0,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                _image!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          )
+        else
+          SizedBox(
+            height: 10,
+          ),
+        Text('No image selected.'),
+        _classificationResults == null
+            ? Text('No results yet.')
+            : Container(
+                height: 180,
+                width: 300,
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 252, 220, 201),
+                  border: Border.all(
+                    color: const Color.fromARGB(255, 0, 0, 0),
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$_classificationResults',
+                  style: TextStyle(
+                    fontSize: 12,
+                  ),
+                )),
+        SizedBox(
+          height: 10,
+        ),
+        Center(
+          child: ElevatedButton(
+            onPressed: isModelLoaded ? pickImage : null,
+            child: Text('Pick Image'),
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size(100, 40),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
