@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,10 +79,9 @@ class MyApp extends StatelessWidget {
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.brown),
                         padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(
-                                16)), // Zwiększa wewnętrzny odstęp przycisku
-                        minimumSize: MaterialStateProperty.all<Size>(Size(
-                            150, 50)), // Ustawia minimalny rozmiar przycisku
+                            EdgeInsets.all(16)),
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(Size(150, 50)),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
@@ -109,25 +109,46 @@ class MyApp extends StatelessWidget {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final Key? key;
   @override
-  final Size preferredSize; // dodaj to
+  final Size preferredSize;
 
   CustomAppBar({
-    Key? key,
-  })  : preferredSize =
-            Size.fromHeight(60.0), // Tutaj ustaw preferowaną wysokość AppBar
+    this.key,
+  })  : preferredSize = Size.fromHeight(60.0),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = FirebaseAuth.instance.currentUser != null;
+
     return AppBar(
       centerTitle: true,
       backgroundColor: Color(0xFFFFDABA),
       elevation: 0,
       title: SvgPicture.asset(
         'assets/LOGO.svg',
-        height: 135, // Dostosuj wysokość logo, jeśli potrzeba
+        height: 135,
       ),
+      leading: Navigator.canPop(context)
+          ? IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          : null,
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: isLoggedIn ? Colors.green : Colors.red,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

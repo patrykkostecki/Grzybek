@@ -28,7 +28,6 @@ class _LoginState extends State<Login> {
     }
 
     try {
-      // Użyj FirebaseAuth do logowania
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,

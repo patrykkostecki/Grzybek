@@ -38,6 +38,8 @@ dependencies:
   tflite_flutter: ^0.10.4
   image_picker: ^1.0.8
   image: ^3.0.1
+  # cloud_firestore: ^4.16.1
+  
 
 
   # The following adds the Cupertino Icons font to your application.

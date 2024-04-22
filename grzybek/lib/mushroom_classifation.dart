@@ -17,6 +17,7 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
   Interpreter? interpreter;
   List<String> labels = [];
   bool isModelLoaded = false;
+  String _maxResultLabelAndValue = '';
 
   @override
   void initState() {
@@ -92,8 +93,21 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
 
           setState(() {
             _classificationResults = output[0].asMap().entries.map((e) {
-              return '${labels[e.key]}: ${(e.value * 100).toStringAsFixed(2)}%';
+              return {
+                'label': labels[e.key],
+                'value': double.parse((e.value * 100).toStringAsFixed(2))
+              };
             }).toList();
+
+            var maxResult = _classificationResults?.reduce((current, next) {
+              return current['value'] > next['value'] ? current : next;
+            });
+
+            _maxResultLabelAndValue =
+                "${maxResult['label']}: ${maxResult['value']}%";
+
+            // print("${maxResult['label']}: ${maxResult['value']}%");
+            // print(_classificationResults[3]);
           });
         } else {
           print("Problem with decoding the image");
@@ -138,11 +152,11 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
             height: 10,
           ),
         Text('.'),
-        _classificationResults == null
+        _maxResultLabelAndValue == null
             ? Text('No results yet.')
             : Container(
-                height: 180,
-                width: 300,
+                height: 50,
+                width: 150,
                 padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: Color.fromARGB(255, 252, 220, 201),
@@ -153,7 +167,7 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '$_classificationResults',
+                  '$_maxResultLabelAndValue',
                   style: TextStyle(
                     fontSize: 12,
                   ),

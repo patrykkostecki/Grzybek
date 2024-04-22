@@ -1,12 +1,12 @@
-0 apagallum
-1 tinta
-2 cep
-3 mataparents
-4 moixerno
-5 murgola
-6 murgolaborda
-7 oureig
-8 peurata
-9 peuratabord
-10 Muchomor plamisty
-11 Class 12
+apagallum
+tinta
+Borowik
+mataparents
+Kozak
+Smardz
+murgolaborda
+oureig
+peurata
+peuratabord
+Muchomor
+Pozostałe
