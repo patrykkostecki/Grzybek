@@ -29,11 +29,15 @@ class HomeView extends StatelessWidget {
             return IndexedStack(
               index: currentIndex,
               children: [
+                
                 Center(child: Icon(Icons.home, size: 100)),
+                
                 Center(child: Icon(Icons.settings, size: 100)),
-                ClassifierWidget(), // Tutaj umieszczasz widget rozpoznawania
+
+                ClassifierWidget(),
+
                 Center(child: Icon(Icons.account_box, size: 100)),
-                // Możesz dodać więcej dzieci jeśli potrzebujesz
+
               ],
             );
           },
@@ -72,15 +76,15 @@ class HomeView extends StatelessWidget {
                   labelTextStyle: MaterialStateProperty.all(
                     TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
-                  // Tutaj możesz dostosować dodatkowe style dla NavigationBarThemeData
+
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
                     bottom:
-                        1, // Ten padding podnosi NavigationBar do góry, ale pozostawia cień pod spodem
+                        1,
                   ),
                   child: NavigationBar(
-                    height: 70, // Możesz kontrolować wysokość NavigationBar
+                    height: 70, 
                     selectedIndex: currentIndex,
                     destinations: const [
                       NavigationDestination(

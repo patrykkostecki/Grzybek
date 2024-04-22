@@ -137,7 +137,7 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
           SizedBox(
             height: 10,
           ),
-        Text('No image selected.'),
+        Text('.'),
         _classificationResults == null
             ? Text('No results yet.')
             : Container(
