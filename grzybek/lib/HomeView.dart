@@ -22,7 +22,7 @@ class HomeView extends ConsumerWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/background_menu.png"),
+            image: AssetImage("assets/HomeBackground.gif"),
             fit: BoxFit.cover,
           ),
         ),
