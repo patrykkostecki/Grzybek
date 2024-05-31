@@ -93,9 +93,7 @@ class _RegistrationState extends State<Registration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Rejestracja'),
-      ),
+      appBar: CustomAppBar(),
       body: Container(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
