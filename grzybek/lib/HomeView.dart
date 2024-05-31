@@ -33,10 +33,9 @@ class HomeView extends ConsumerWidget {
             return IndexedStack(
               index: currentIndex,
               children: [
-                Center(child: Icon(Icons.home, size: 100)),
-                Center(child: Icon(Icons.settings, size: 100)),
+                Center(child: Icon(Icons.book, size: 100)),
                 ClassifierWidget(),
-                Center(child: Icon(Icons.account_box, size: 100)),
+                Center(child: Icon(Icons.settings, size: 100)),
               ],
             );
           },
@@ -91,27 +90,27 @@ class HomeView extends ConsumerWidget {
                           label: 'Katalog',
                         ),
                         NavigationDestination(
-                          icon: isLoggedIn
-                              ? Icon(Icons.forum_outlined)
-                              : Icon(Icons.close, color: Colors.red),
-                          label: 'Forum',
-                        ),
-                        NavigationDestination(
                           icon: Icon(Icons.local_florist_outlined),
                           label: 'Rozpoznaj',
                         ),
                         NavigationDestination(
                           icon: isLoggedIn
-                              ? Icon(Icons.notifications)
+                              ? Icon(Icons.forum_outlined)
                               : Icon(Icons.close, color: Colors.red),
-                          label: 'Alerty',
+                          label: 'Forum',
                         ),
-                        NavigationDestination(
-                          icon: isLoggedIn
-                              ? Icon(Icons.forest_outlined)
-                              : Icon(Icons.close, color: Colors.red),
-                          label: 'Mapa',
-                        ),
+                        // NavigationDestination(
+                        //   icon: isLoggedIn
+                        //       ? Icon(Icons.notifications)
+                        //       : Icon(Icons.close, color: Colors.red),
+                        //   label: 'Alerty',
+                        // ),
+                        // NavigationDestination(
+                        //   icon: isLoggedIn
+                        //       ? Icon(Icons.forest_outlined)
+                        //       : Icon(Icons.close, color: Colors.red),
+                        //   label: 'Mapa',
+                        // ),
                       ],
                       onDestinationSelected: (int index) {
                         if (isLoggedIn || index == 2) {

@@ -6,6 +6,7 @@ import 'package:grzybek/main.dart';
 import 'package:grzybek/login.dart';
 import 'package:grzybek/providers.dart';
 import 'package:grzybek/registration.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class SecondScreen extends ConsumerWidget {
   @override
@@ -37,7 +38,22 @@ class SecondScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18.0, vertical: 0.1),
                     child: isLoggedIn
-                        ? Text('WITAM')
+                        ? AnimatedTextKit(
+                            animatedTexts: [
+                              TypewriterAnimatedText(
+                                'Hello world!',
+                                textStyle: const TextStyle(
+                                  fontSize: 32.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                speed: const Duration(milliseconds: 2000),
+                              ),
+                            ],
+                            totalRepeatCount: 4,
+                            pause: const Duration(milliseconds: 1000),
+                            displayFullTextOnTap: true,
+                            stopPauseOnTap: true,
+                          )
                         : Text(
                             "Zaloguj się do aplikacji Grzybek aby mieć dostęp do wiekszych mozliwosci!",
                             textAlign: TextAlign.center,
