@@ -80,6 +80,12 @@ flutter:
     - assets/model.tflite
     - assets/models/model_unquant.tflite
     - assets/Labels/labels.txt
+    - assets/Labels/labels_5.txt
+    - assets/models/model69.tflite
+    - assets/models/model1.tflite
+    - assets/Labels/labels3.txt
+    - assets/models/model_unquant3.tflite
+    - assets/Animations/Szukaj.gif
     
   #   - images/a_dot_ham.jpeg
 

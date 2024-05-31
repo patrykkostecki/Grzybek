@@ -1,0 +1,9 @@
+0 Pieczarka
+1 Muchomor
+2 Borowik
+3 Zasłonak
+4 Dzwonkówka
+5 Wilgotnica
+6 Rydz
+7 Gołąbek
+8 Maślak
