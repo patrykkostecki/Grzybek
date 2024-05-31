@@ -51,6 +51,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_svg: ^2.0.4
   animated_text_kit: ^4.2.2
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +87,7 @@ flutter:
     - assets/Labels/labels3.txt
     - assets/models/model_unquant3.tflite
     - assets/Animations/Szukaj.gif
+    - assets/avatars/
     
   #   - images/a_dot_ham.jpeg
 

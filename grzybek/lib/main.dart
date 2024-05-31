@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grzybek/login_screen.dart'; // Upewnij się, że ta ścieżka jest poprawna w Twoim projekcie
+import 'package:grzybek/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Upewnij się, że ta ścieżka jest poprawna w Twoim projekcie
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,6 +119,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   })  : preferredSize = Size.fromHeight(60.0),
         super(key: key);
 
+  Future<int> _getSelectedAvatar() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('selected_avatar') ?? -1;
+  }
+
+  Future<String?> _getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = FirebaseAuth.instance.currentUser != null;
@@ -139,14 +150,68 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.all(10),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              color: isLoggedIn ? Colors.green : Colors.red,
-              shape: BoxShape.circle,
-            ),
-          ),
+          child: isLoggedIn
+              ? FutureBuilder<int>(
+                  future: _getSelectedAvatar(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasData && snapshot.data != -1) {
+                      int avatarIndex = snapshot.data!;
+                      String avatarPath =
+                          'assets/avatars/${avatarIndex + 1}.png';
+                      return Row(
+                        children: [
+                          FutureBuilder<String?>(
+                            future: _getUsername(),
+                            builder: (context, usernameSnapshot) {
+                              if (usernameSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              } else if (usernameSnapshot.hasData) {
+                                return Text(
+                                  usernameSnapshot.data!,
+                                  style: TextStyle(color: Colors.black),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
+                          ),
+                          SizedBox(width: 10),
+                          Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: AssetImage(avatarPath),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    }
+                  },
+                )
+              : Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
         ),
       ],
     );
