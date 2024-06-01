@@ -52,28 +52,40 @@ class HomeView extends ConsumerWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 60,
                   offset: Offset(0, -1),
                 ),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(40),
-                topRight: Radius.circular(40),
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-              child: NavigationBarTheme(
-                data: NavigationBarThemeData(
-                  backgroundColor: Color(0xFF795548),
-                  indicatorColor: Color.fromARGB(255, 100, 77, 68),
-                  labelTextStyle: MaterialStateProperty.all(
-                    TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              borderRadius: BorderRadius.circular(40),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(197, 163, 126, 111),
+                  borderRadius: BorderRadius.circular(40),
+                  border: Border.all(
+                    color: Color.fromARGB(255, 85, 60, 47),
+                    width: 4,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.9),
+                      blurRadius: 60,
+                      offset: Offset(0, 9),
+                    ),
+                  ],
                 ),
-                child: Padding(
+                child: NavigationBarTheme(
+                  data: NavigationBarThemeData(
+                    backgroundColor:
+                        Colors.transparent, // Ustawiamy kolor w kontenerze
+                    indicatorColor: Color.fromARGB(255, 85, 60, 47),
+                    labelTextStyle: MaterialStateProperty.all(
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  child: Padding(
                     padding: EdgeInsets.only(
                       bottom: 1,
                     ),
@@ -105,7 +117,9 @@ class HomeView extends ConsumerWidget {
                               .update((state) => index);
                         }
                       },
-                    )),
+                    ),
+                  ),
+                ),
               ),
             ),
           );

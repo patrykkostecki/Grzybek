@@ -144,7 +144,8 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                 .map((e) {
                   return {
                     'label': labels[e.key]
-                        .substring(2), // Remove first two characters
+                        .substring(2)
+                        .trim(), // Remove first two characters and trim
                     'value': double.parse((e.value * 100).toStringAsFixed(2))
                   };
                 })
@@ -203,12 +204,23 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
 
     showDialog(
       context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white.withOpacity(0.9),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(gifPath),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  gifPath,
+                  key: UniqueKey(), // Ensure the GIF restarts
+                  width: 150, // Adjust the size as needed
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -274,16 +286,21 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                   int index = entry.key;
                   Map<String, dynamic> result = entry.value;
 
+                  // Logowanie debugujące
+                  print("Predykcja: ${result['label']} - ${result['value']}%");
+                  print(
+                      "Czy jest jadalny: ${edibleMushrooms.contains(result['label'])}");
+
                   // Generate a color, height, and text size for each container based on its index
                   Color containerColor;
                   double containerHeight;
                   double textSize;
                   if (edibleMushrooms.contains(result['label'])) {
-                    containerColor =
-                        Color.fromARGB(255, 57, 131, 59).withOpacity(0.8);
+                    containerColor = Color.fromARGB(255, 57, 131, 59)
+                        .withOpacity(0.8); // Zielony dla jadalnych
                   } else {
-                    containerColor =
-                        Color.fromARGB(255, 158, 31, 22).withOpacity(0.8);
+                    containerColor = Color.fromARGB(255, 158, 31, 22)
+                        .withOpacity(0.8); // Czerwony dla niejadalnych
                   }
                   switch (index) {
                     case 0:
