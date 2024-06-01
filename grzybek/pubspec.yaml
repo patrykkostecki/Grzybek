@@ -90,6 +90,8 @@ flutter:
     - assets/avatars/
     - assets/Animations/dobry.gif
     - assets/Animations/zly.gif
+    - assets/grzyby/
+
     
   #   - images/a_dot_ham.jpeg
 
