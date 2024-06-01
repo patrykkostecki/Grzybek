@@ -88,7 +88,10 @@ flutter:
     - assets/models/model_unquant3.tflite
     - assets/Animations/Szukaj.gif
     - assets/avatars/
+    - assets/Animations/dobry.gif
+    - assets/Animations/zly.gif
     - assets/grzyby/
+
     
   #   - images/a_dot_ham.jpeg
 

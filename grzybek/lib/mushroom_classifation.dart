@@ -14,9 +14,11 @@ class ClassifierWidget extends StatefulWidget {
 class _ClassifierWidgetState extends State<ClassifierWidget> {
   File? _image;
   List<Map<String, dynamic>>? _classificationResults;
+  List<Map<String, dynamic>>? _displayedResults = [];
   Interpreter? interpreter;
   List<String> labels = [];
   bool isModelLoaded = false;
+  List<double> opacities = [0.0, 0.0, 0.0]; // Initialize with 0 opacity
 
   // List of edible mushrooms
   final List<String> edibleMushrooms = [
@@ -69,6 +71,8 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        _displayedResults = [];
+        opacities = [0.0, 0.0, 0.0];
       });
       print("Image picked: ${pickedFile.path}");
       classifyImage();
@@ -84,6 +88,8 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        _displayedResults = [];
+        opacities = [0.0, 0.0, 0.0];
       });
       print("Photo taken: ${pickedFile.path}");
       classifyImage();
@@ -149,6 +155,12 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
             _classificationResults!
                 .sort((a, b) => b['value'].compareTo(a['value']));
             _classificationResults = _classificationResults!.take(3).toList();
+
+            // Display results one by one with fade-in effect
+            showResultsSequentially();
+
+            // Display the appropriate animation in a dialog after 5 seconds
+            Future.delayed(Duration(seconds: 5), showClassificationAnimation);
           });
           print("Top 3 classification results: $_classificationResults");
         } else {
@@ -167,151 +179,225 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
     }
   }
 
+  void showResultsSequentially() async {
+    for (int i = 0; i < _classificationResults!.length; i++) {
+      setState(() {
+        _displayedResults!.add(_classificationResults![i]);
+      });
+      await Future.delayed(
+          Duration(milliseconds: 500)); // Short delay before starting fade-in
+      setState(() {
+        opacities[i] = 1.0;
+      });
+      await Future.delayed(
+          Duration(seconds: 1)); // Delay to keep the fade-in effect visible
+    }
+  }
+
+  void showClassificationAnimation() {
+    // Determine which GIF to show
+    bool isEdible =
+        edibleMushrooms.contains(_classificationResults![0]['label']);
+    String gifPath =
+        isEdible ? 'assets/Animations/dobry.gif' : 'assets/Animations/zly.gif';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(gifPath),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Powrót'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor:
+                      Color.fromARGB(255, 15, 113, 143), // Kolor tła
+                  shadowColor: Colors.black, // Kolor cienia
+                  minimumSize: Size(150, 50),
+                  elevation: 8, // Intensywność cienia
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  side: BorderSide(
+                    color: Color.fromARGB(255, 255, 255, 255), // Kolor ramki
+                    width: 4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    double containerWidth = MediaQuery.of(context).size.width * 0.6;
+    double containerWidth = MediaQuery.of(context).size.width * 0.7;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(height: 35),
-        Container(
-          height: 270,
-          width: 270,
-          decoration: BoxDecoration(
-            border: Border.all(
-                color: const Color.fromARGB(255, 0, 25, 46), width: 4.0),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: _image != null
-                ? Image.file(_image!, fit: BoxFit.cover)
-                : Image.asset(
-                    'assets/Animations/Szukaj.gif', // Path to your GIF file
-                    fit: BoxFit.cover,
-                  ), // Display the GIF
-          ),
-        ),
-        SizedBox(height: 20),
-        if (_classificationResults != null)
-          Column(
-            children: _classificationResults!.map((result) {
-              // Generate a color, height, and text size for each container based on its index
-              Color containerColor;
-              double containerHeight;
-              double textSize;
-              if (edibleMushrooms.contains(result['label'])) {
-                containerColor =
-                    Color.fromARGB(255, 57, 131, 59).withOpacity(0.8);
-              } else {
-                containerColor =
-                    Color.fromARGB(255, 158, 31, 22).withOpacity(0.8);
-              }
-              switch (_classificationResults!.indexOf(result)) {
-                case 0:
-                  containerHeight = 70; // Largest container
-                  textSize = 26; // Largest text size
-                  break;
-                case 1:
-                  containerHeight = 35; // Medium container
-                  textSize = 14; // Medium text size
-                  break;
-                case 2:
-                  containerHeight = 35; // Smallest container
-                  textSize = 14; // Smallest text size
-                  break;
-                default:
-                  containerHeight = 40;
-                  textSize = 16;
-              }
-              return Container(
-                height: containerHeight,
-                width: containerWidth,
-                margin: EdgeInsets.symmetric(vertical: 5),
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: containerColor,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      spreadRadius: 4,
-                      blurRadius: 10,
-                      offset: Offset(0, 7), // changes position of shadow
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    '${result['label']} - ${result['value']}%',
-                    style: TextStyle(color: Colors.white, fontSize: textSize),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        if (_classificationResults == null && _image != null)
-          Center(child: CircularProgressIndicator()),
-        SizedBox(height: 10),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 100.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: isModelLoaded ? pickImage : null,
-                    child: Text('Wybierz Zdjęcie'),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor:
-                          Color.fromARGB(255, 15, 113, 143), // Kolor tła
-                      shadowColor: Colors.black, // Kolor cienia
-                      minimumSize: Size(150, 50),
-                      elevation: 8, // Intensywność cienia
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      side: BorderSide(
-                        color:
-                            Color.fromARGB(255, 255, 255, 255), // Kolor ramki
-                        width: 4,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: isModelLoaded ? takePhoto : null,
-                    child: Text('Zrób Zdjęcie'),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor:
-                          Color.fromARGB(255, 15, 113, 143), // Kolor tła
-                      shadowColor: Colors.black, // Kolor cienia
-                      minimumSize: Size(150, 50),
-                      elevation: 8, // Intensywność cienia
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      side: BorderSide(
-                        color: Colors.white, // Kolor ramki
-                        width: 4,
-                      ),
-                    ),
-                  ),
-                ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 25),
+            Container(
+              height: MediaQuery.of(context).size.width * 0.7,
+              width: MediaQuery.of(context).size.width * 0.7,
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color: const Color.fromARGB(255, 0, 25, 46), width: 4.0),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: _image != null
+                    ? Image.file(_image!, fit: BoxFit.cover)
+                    : Image.asset(
+                        'assets/Animations/Szukaj.gif', // Path to your GIF file
+                        fit: BoxFit.cover,
+                      ), // Display the GIF
               ),
             ),
-          ),
+            SizedBox(height: 20),
+            if (_displayedResults != null)
+              Column(
+                children: _displayedResults!.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  Map<String, dynamic> result = entry.value;
+
+                  // Generate a color, height, and text size for each container based on its index
+                  Color containerColor;
+                  double containerHeight;
+                  double textSize;
+                  if (edibleMushrooms.contains(result['label'])) {
+                    containerColor =
+                        Color.fromARGB(255, 57, 131, 59).withOpacity(0.8);
+                  } else {
+                    containerColor =
+                        Color.fromARGB(255, 158, 31, 22).withOpacity(0.8);
+                  }
+                  switch (index) {
+                    case 0:
+                      containerHeight = 70; // Largest container
+                      textSize = 26; // Largest text size
+                      break;
+                    case 1:
+                      containerHeight = 35; // Medium container
+                      textSize = 14; // Medium text size
+                      break;
+                    case 2:
+                      containerHeight = 35; // Smallest container
+                      textSize = 14; // Smallest text size
+                      break;
+                    default:
+                      containerHeight = 40;
+                      textSize = 16;
+                  }
+                  return AnimatedOpacity(
+                    opacity: opacities[index],
+                    duration: Duration(seconds: 1),
+                    child: Container(
+                      height: containerHeight,
+                      width: containerWidth,
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: containerColor,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.5),
+                            spreadRadius: 4,
+                            blurRadius: 10,
+                            offset: Offset(0, 7), // changes position of shadow
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${result['label']} - ${result['value']}%',
+                          style: TextStyle(
+                              color: Colors.white, fontSize: textSize),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            if (_displayedResults == null && _image != null)
+              Center(child: CircularProgressIndicator()),
+            SizedBox(height: 30),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: isModelLoaded ? pickImage : null,
+                        child: Text('Wybierz Zdjęcie'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              Color.fromARGB(255, 15, 113, 143), // Kolor tła
+                          shadowColor: Colors.black, // Kolor cienia
+                          minimumSize: Size(150, 50),
+                          elevation: 8, // Intensywność cienia
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          side: BorderSide(
+                            color: Color.fromARGB(
+                                255, 255, 255, 255), // Kolor ramki
+                            width: 4,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: isModelLoaded ? takePhoto : null,
+                        child: Text('Zrób Zdjęcie'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              Color.fromARGB(255, 15, 113, 143), // Kolor tła
+                          shadowColor: Colors.black, // Kolor cienia
+                          minimumSize: Size(150, 50),
+                          elevation: 8, // Intensywność cienia
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          side: BorderSide(
+                            color: Colors.white, // Kolor ramki
+                            width: 4,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
