@@ -7,8 +7,14 @@ import 'package:grzybek/login.dart';
 import 'package:grzybek/providers.dart';
 import 'package:grzybek/registration.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SecondScreen extends ConsumerWidget {
+  Future<String?> _getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateChangesProvider).asData?.value;
@@ -41,7 +47,7 @@ class SecondScreen extends ConsumerWidget {
                         ? AnimatedTextKit(
                             animatedTexts: [
                               TypewriterAnimatedText(
-                                'Hello world!',
+                                'Cześć',
                                 textStyle: const TextStyle(
                                   fontSize: 32.0,
                                   fontWeight: FontWeight.bold,

@@ -4,11 +4,17 @@ import 'package:grzybek/catalog.dart';
 import 'package:grzybek/main.dart';
 import 'package:grzybek/mushroom_classifation.dart';
 import 'package:grzybek/providers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final bottomNavIndexProvider = StateProvider((ref) => 0);
 
 class HomeView extends ConsumerWidget {
   const HomeView({Key? key}) : super(key: key);
+
+  Future<String?> _getUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -111,7 +117,7 @@ class HomeView extends ConsumerWidget {
                         ),
                       ],
                       onDestinationSelected: (int index) {
-                        if (isLoggedIn || index == 2) {
+                        if (isLoggedIn || index == 1) {
                           ref
                               .read(bottomNavIndexProvider.notifier)
                               .update((state) => index);

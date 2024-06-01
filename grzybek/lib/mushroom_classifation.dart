@@ -305,7 +305,7 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                   switch (index) {
                     case 0:
                       containerHeight = 70; // Largest container
-                      textSize = 26; // Largest text size
+                      textSize = 20; // Largest text size
                       break;
                     case 1:
                       containerHeight = 35; // Medium container
