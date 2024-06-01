@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grzybek/catalog.dart';
 import 'package:grzybek/main.dart';
 import 'package:grzybek/mushroom_classifation.dart';
 import 'package:grzybek/providers.dart';
@@ -7,15 +8,13 @@ import 'package:grzybek/providers.dart';
 final bottomNavIndexProvider = StateProvider((ref) => 0);
 
 class HomeView extends ConsumerWidget {
-  // Change StatelessWidget to ConsumerWidget
-  const HomeView({super.key});
+  const HomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authStateChangesProvider).asData?.value;
     final isLoggedIn = user != null;
 
-    print("Whole Page Built!");
     return Scaffold(
       appBar: CustomAppBar(),
       extendBody: true,
@@ -28,12 +27,11 @@ class HomeView extends ConsumerWidget {
         ),
         child: Consumer(
           builder: (context, ref, child) {
-            print('Index Stack Built!');
             final currentIndex = ref.watch(bottomNavIndexProvider);
             return IndexedStack(
               index: currentIndex,
               children: [
-                Center(child: Icon(Icons.book, size: 100)),
+                MushroomCatalog(),
                 ClassifierWidget(),
                 Center(child: Icon(Icons.settings, size: 100)),
               ],
@@ -80,7 +78,7 @@ class HomeView extends ConsumerWidget {
                       bottom: 1,
                     ),
                     child: NavigationBar(
-                      height: 70,
+                      height: 60,
                       selectedIndex: currentIndex,
                       destinations: [
                         NavigationDestination(
@@ -99,18 +97,6 @@ class HomeView extends ConsumerWidget {
                               : Icon(Icons.close, color: Colors.red),
                           label: 'Forum',
                         ),
-                        // NavigationDestination(
-                        //   icon: isLoggedIn
-                        //       ? Icon(Icons.notifications)
-                        //       : Icon(Icons.close, color: Colors.red),
-                        //   label: 'Alerty',
-                        // ),
-                        // NavigationDestination(
-                        //   icon: isLoggedIn
-                        //       ? Icon(Icons.forest_outlined)
-                        //       : Icon(Icons.close, color: Colors.red),
-                        //   label: 'Mapa',
-                        // ),
                       ],
                       onDestinationSelected: (int index) {
                         if (isLoggedIn || index == 2) {
