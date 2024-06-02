@@ -38,9 +38,12 @@ class SecondScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Image.asset(
-                      'assets/Login.png',
-                      width: 200,
-                      height: 200,
+                      'assets/Grzybek _Login.png',
+                      width: 275,
+                      height: 275,
+                    ),
+                    SizedBox(
+                      height: 25,
                     ),
                     Padding(
                         padding: const EdgeInsets.symmetric(
@@ -119,7 +122,7 @@ class SecondScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 40),
+                    SizedBox(height: 30),
                     Container(
                       width: 200, // Set the desired width here
                       child: ElevatedButton(
@@ -147,6 +150,9 @@ class SecondScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 55,
+                    )
                   ],
                 ),
               ),

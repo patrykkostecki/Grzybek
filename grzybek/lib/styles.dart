@@ -8,16 +8,16 @@ class AppButtonStyles {
 
   static final ButtonStyle primaryButtonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
-    padding: EdgeInsets.zero, // To remove default padding
+    padding: EdgeInsets.zero,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(30),
       side: BorderSide(
-        color: Color.fromARGB(255, 189, 165, 130), // Softer frame color
+        color: Color.fromARGB(255, 189, 165, 130),
         width: 4,
       ),
     ),
-    shadowColor: Colors.black, // Shadow color
-    elevation: 8, // Shadow intensity
+    shadowColor: Colors.black,
+    elevation: 8,
   ).copyWith(
     backgroundColor: MaterialStateProperty.all(Colors.transparent),
   );

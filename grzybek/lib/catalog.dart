@@ -374,6 +374,9 @@ Zastosowanie: Trująca, nie należy jej spożywać.
         ),
         child: Column(
           children: [
+            SizedBox(
+              height: 30,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Container(
@@ -390,7 +393,7 @@ Zastosowanie: Trująca, nie należy jej spożywać.
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: Color.fromARGB(255, 189, 165, 130).withOpacity(0.8),
-                    width: 2,
+                    width: 4,
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -460,6 +463,7 @@ Zastosowanie: Trująca, nie należy jej spożywać.
                     ),
                     SizedBox(height: 10),
                     Container(
+                      height: 250, // Fixed height for the container
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -478,35 +482,43 @@ Zastosowanie: Trująca, nie należy jej spożywać.
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromARGB(255, 229, 215, 194),
-                            height: 1.5,
+                      child: SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: 200, // Same height as the container
                           ),
-                          children: selectedMushroomDetails['description']!
-                              .trim()
-                              .split('\n')
-                              .map((line) {
-                            if (line.contains(':')) {
-                              final parts = line.split(':');
-                              return TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: parts[0] + ': ',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(text: parts[1] + '\n'),
-                                ],
-                              );
-                            } else {
-                              return TextSpan(text: line + '\n');
-                            }
-                          }).toList(),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromARGB(255, 229, 215, 194),
+                                height: 1.5,
+                              ),
+                              children: selectedMushroomDetails['description']!
+                                  .trim()
+                                  .split('\n')
+                                  .map((line) {
+                                if (line.contains(':')) {
+                                  final parts = line.split(':');
+                                  return TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: parts[0] + ': ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(text: parts[1] + '\n'),
+                                    ],
+                                  );
+                                } else {
+                                  return TextSpan(text: line + '\n');
+                                }
+                              }).toList(),
+                            ),
+                            textAlign:
+                                TextAlign.center, // Center-align the text
+                          ),
                         ),
-                        textAlign: TextAlign.center, // Wyrównanie do środka
                       ),
                     ),
                   ],

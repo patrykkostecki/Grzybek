@@ -308,11 +308,11 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                       textSize = 20; // Largest text size
                       break;
                     case 1:
-                      containerHeight = 35; // Medium container
+                      containerHeight = 40; // Medium container
                       textSize = 14; // Medium text size
                       break;
                     case 2:
-                      containerHeight = 35; // Smallest container
+                      containerHeight = 40; // Smallest container
                       textSize = 14; // Smallest text size
                       break;
                     default:
