@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grzybek/mushroom_data.dart';
 import 'package:grzybek/styles.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -182,7 +183,7 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
   }
 
   void showResultsSequentially() async {
-    for (int i = 0; i < _classificationResults!.length; i++) {
+    for (int i = 0; i < (_classificationResults?.length ?? 0); i++) {
       setState(() {
         _displayedResults!.add(_classificationResults![i]);
       });
@@ -197,6 +198,9 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
   }
 
   void showClassificationAnimation() {
+    if (_classificationResults == null || _classificationResults!.isEmpty) {
+      return;
+    }
     // Determine which GIF to show
     bool isEdible =
         edibleMushrooms.contains(_classificationResults![0]['label']);
@@ -230,6 +234,21 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    showMushroomInfo(
+                        context, _classificationResults![0]['label']);
+                  },
+                  style: AppButtonStyles.primaryButtonStyle,
+                  child: AppButtonStyles.getGradientInk(
+                    'Pokaz informacje o grzybie', // Set the text color if needed
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                width: 200, // Adjust the width as needed
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
                   style: AppButtonStyles.primaryButtonStyle,
                   child: AppButtonStyles.getGradientInk(
@@ -238,6 +257,115 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void showMushroomInfo(BuildContext context, String mushroomName) {
+    final mushroomDetails = mushrooms.firstWhere(
+      (mushroom) => mushroom['name'] == mushroomName,
+      orElse: () => <String, String>{}, // Return an empty map
+    );
+
+    if (mushroomDetails.isEmpty) {
+      // Show a dialog with a message indicating no details available
+      showDialog(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor:
+                const Color.fromARGB(255, 146, 127, 127).withOpacity(0.9),
+            content: Text(
+              'Brak dostępnych informacji o tym grzybie.',
+              style: TextStyle(color: Color.fromARGB(255, 229, 215, 194)),
+              textAlign: TextAlign.center,
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: AppButtonStyles.primaryButtonStyle,
+                child: AppButtonStyles.getGradientInk(
+                  'Zamknij',
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor:
+              const Color.fromARGB(255, 146, 127, 127).withOpacity(0.9),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    mushroomDetails['image']!,
+                    key: UniqueKey(), // Ensure the image reloads
+                    width: 250, // Adjust the size as needed
+                    height: 250,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(height: 20),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color.fromARGB(255, 229, 215, 194),
+                      height: 1.5,
+                    ),
+                    children: mushroomDetails['description']!
+                        .trim()
+                        .split('\n')
+                        .map((line) {
+                      if (line.contains(':')) {
+                        final parts = line.split(':');
+                        return TextSpan(
+                          children: [
+                            TextSpan(
+                              text: parts[0] + ': ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: parts[1] + '\n'),
+                          ],
+                        );
+                      } else {
+                        return TextSpan(text: line + '\n');
+                      }
+                    }).toList(),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: 200, // Adjust the width as needed
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: AppButtonStyles.primaryButtonStyle,
+                    child: AppButtonStyles.getGradientInk(
+                      'Zamknij', // Set the text color if needed
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
