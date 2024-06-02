@@ -286,8 +286,6 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                   print(
                       "Czy jest jadalny: ${edibleMushrooms.contains(result['label'])}");
 
-                  // Generate a color, height, and text size for each container based on its index
-                  Color containerColor;
                   double containerHeight;
                   double textSize;
                   List<Color> gradientColors;
@@ -295,12 +293,12 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                     gradientColors = [
                       Color.fromARGB(255, 57, 131, 59).withOpacity(0.8),
                       Color.fromARGB(255, 0, 83, 38).withOpacity(0.8),
-                    ]; // Zielony dla jadalnych
+                    ];
                   } else {
                     gradientColors = [
                       Color.fromARGB(255, 158, 31, 22).withOpacity(0.8),
                       Color.fromARGB(255, 77, 0, 0).withOpacity(0.8),
-                    ]; // Czerwony dla niejadalnych
+                    ];
                   }
                   switch (index) {
                     case 0:

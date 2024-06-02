@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grzybek/catalog.dart';
+import 'package:grzybek/Screens/forum.dart';
+import 'package:grzybek/screens/catalog.dart';
 import 'package:grzybek/main.dart';
-import 'package:grzybek/mushroom_classifation.dart';
+import 'package:grzybek/screens/mushroom_classifation.dart';
 import 'package:grzybek/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,7 +40,7 @@ class HomeView extends ConsumerWidget {
               children: [
                 MushroomCatalog(),
                 ClassifierWidget(),
-                Center(child: Icon(Icons.settings, size: 100)),
+                ForumPage(),
               ],
             );
           },
