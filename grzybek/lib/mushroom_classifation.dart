@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grzybek/styles.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
@@ -199,15 +200,17 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
     // Determine which GIF to show
     bool isEdible =
         edibleMushrooms.contains(_classificationResults![0]['label']);
-    String gifPath =
-        isEdible ? 'assets/Animations/dobry.gif' : 'assets/Animations/zly.gif';
+    String gifPath = isEdible
+        ? 'assets/Animations/Jadalny2.gif'
+        : 'assets/Animations/Trujcy1.gif';
 
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white.withOpacity(0.9),
+          backgroundColor:
+              const Color.fromARGB(255, 146, 127, 127).withOpacity(0.9),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -216,30 +219,21 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                 child: Image.asset(
                   gifPath,
                   key: UniqueKey(), // Ensure the GIF restarts
-                  width: 150, // Adjust the size as needed
-                  height: 150,
+                  width: 250, // Adjust the size as needed
+                  height: 250,
                   fit: BoxFit.cover,
                 ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Powrót'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor:
-                      Color.fromARGB(255, 15, 113, 143), // Kolor tła
-                  shadowColor: Colors.black, // Kolor cienia
-                  minimumSize: Size(150, 50),
-                  elevation: 8, // Intensywność cienia
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  side: BorderSide(
-                    color: Color.fromARGB(255, 255, 255, 255), // Kolor ramki
-                    width: 4,
+              Container(
+                width: 200, // Adjust the width as needed
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: AppButtonStyles.primaryButtonStyle,
+                  child: AppButtonStyles.getGradientInk(
+                    'Powrót', // Set the text color if needed
                   ),
                 ),
               ),
@@ -266,7 +260,8 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
               width: MediaQuery.of(context).size.width * 0.7,
               decoration: BoxDecoration(
                 border: Border.all(
-                    color: const Color.fromARGB(255, 0, 25, 46), width: 4.0),
+                    color: const Color.fromARGB(255, 189, 165, 130),
+                    width: 4.0),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ClipRRect(
@@ -274,9 +269,9 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                 child: _image != null
                     ? Image.file(_image!, fit: BoxFit.cover)
                     : Image.asset(
-                        'assets/Animations/Szukaj.gif', // Path to your GIF file
+                        'assets/Animations/Scanner.gif',
                         fit: BoxFit.cover,
-                      ), // Display the GIF
+                      ),
               ),
             ),
             SizedBox(height: 20),
@@ -295,12 +290,17 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                   Color containerColor;
                   double containerHeight;
                   double textSize;
+                  List<Color> gradientColors;
                   if (edibleMushrooms.contains(result['label'])) {
-                    containerColor = Color.fromARGB(255, 57, 131, 59)
-                        .withOpacity(0.8); // Zielony dla jadalnych
+                    gradientColors = [
+                      Color.fromARGB(255, 57, 131, 59).withOpacity(0.8),
+                      Color.fromARGB(255, 0, 83, 38).withOpacity(0.8),
+                    ]; // Zielony dla jadalnych
                   } else {
-                    containerColor = Color.fromARGB(255, 158, 31, 22)
-                        .withOpacity(0.8); // Czerwony dla niejadalnych
+                    gradientColors = [
+                      Color.fromARGB(255, 158, 31, 22).withOpacity(0.8),
+                      Color.fromARGB(255, 77, 0, 0).withOpacity(0.8),
+                    ]; // Czerwony dla niejadalnych
                   }
                   switch (index) {
                     case 0:
@@ -328,26 +328,32 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                       margin: EdgeInsets.symmetric(vertical: 5),
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: containerColor,
+                        gradient: LinearGradient(
+                          colors: gradientColors,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 4,
+                            color: const Color.fromARGB(255, 255, 255, 255)
+                                .withOpacity(0.5),
+                            spreadRadius: 2,
                             blurRadius: 10,
                             offset: Offset(0, 7), // changes position of shadow
                           ),
                         ],
                         border: Border.all(
-                          color: Colors.white,
-                          width: 2,
+                          color: Color.fromARGB(255, 189, 165, 130),
+                          width: 4,
                         ),
                       ),
                       child: Center(
                         child: Text(
                           '${result['label']} - ${result['value']}%',
                           style: TextStyle(
-                              color: Colors.white, fontSize: textSize),
+                              color: Color.fromARGB(255, 229, 215, 194),
+                              fontSize: textSize),
                         ),
                       ),
                     ),
@@ -367,22 +373,9 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: isModelLoaded ? pickImage : null,
-                        child: Text('Wybierz Zdjęcie'),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor:
-                              Color.fromARGB(255, 15, 113, 143), // Kolor tła
-                          shadowColor: Colors.black, // Kolor cienia
-                          minimumSize: Size(150, 50),
-                          elevation: 8, // Intensywność cienia
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          side: BorderSide(
-                            color: Color.fromARGB(
-                                255, 255, 255, 255), // Kolor ramki
-                            width: 4,
-                          ),
+                        style: AppButtonStyles.primaryButtonStyle,
+                        child: AppButtonStyles.getGradientInk(
+                          'Wybierz Zdjęcie',
                         ),
                       ),
                     ),
@@ -390,21 +383,10 @@ class _ClassifierWidgetState extends State<ClassifierWidget> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: isModelLoaded ? takePhoto : null,
-                        child: Text('Zrób Zdjęcie'),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor:
-                              Color.fromARGB(255, 15, 113, 143), // Kolor tła
-                          shadowColor: Colors.black, // Kolor cienia
-                          minimumSize: Size(150, 50),
-                          elevation: 8, // Intensywność cienia
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          side: BorderSide(
-                            color: Colors.white, // Kolor ramki
-                            width: 4,
-                          ),
+                        style: AppButtonStyles.primaryButtonStyle,
+                        child: AppButtonStyles.getGradientInk(
+                          'Zrób Zdjęcie',
+                          borderRadius: 40,
                         ),
                       ),
                     ),

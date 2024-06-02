@@ -68,10 +68,10 @@ class HomeView extends ConsumerWidget {
               borderRadius: BorderRadius.circular(40),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(197, 163, 126, 111),
+                  color: Color.fromARGB(255, 141, 108, 88),
                   borderRadius: BorderRadius.circular(40),
                   border: Border.all(
-                    color: Color.fromARGB(255, 85, 60, 47),
+                    color: Color.fromARGB(255, 189, 165, 130),
                     width: 4,
                   ),
                   boxShadow: [
@@ -84,9 +84,8 @@ class HomeView extends ConsumerWidget {
                 ),
                 child: NavigationBarTheme(
                   data: NavigationBarThemeData(
-                    backgroundColor:
-                        Colors.transparent, // Ustawiamy kolor w kontenerze
-                    indicatorColor: Color.fromARGB(255, 85, 60, 47),
+                    backgroundColor: Colors.transparent,
+                    indicatorColor: Color.fromARGB(255, 229, 215, 194),
                     labelTextStyle: MaterialStateProperty.all(
                       TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),

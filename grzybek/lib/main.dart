@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grzybek/login_screen.dart';
+import 'package:grzybek/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Upewnij się, że ta ścieżka jest poprawna w Twoim projekcie
 
 void main() async {
@@ -73,28 +74,21 @@ class MyApp extends StatelessWidget {
                   SizedBox(
                     height: 40,
                   ),
-                  TextButton(
-                    style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.black),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.brown),
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(16)),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(150, 50)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ))),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SecondScreen()),
-                      );
-                    },
-                    child: Text('Kontynnuj'),
+                  Center(
+                    child: Container(
+                      width: 200, // Set the desired width here
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SecondScreen()),
+                          );
+                        },
+                        style: AppButtonStyles.primaryButtonStyle,
+                        child: AppButtonStyles.getGradientInk('Kontynnuj'),
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: 80,

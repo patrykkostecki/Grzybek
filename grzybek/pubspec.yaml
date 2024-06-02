@@ -91,6 +91,9 @@ flutter:
     - assets/Animations/dobry.gif
     - assets/Animations/zly.gif
     - assets/grzyby/
+    - assets/Animations/Scanner.gif
+    - assets/Animations/Jadalny2.gif
+    - assets/Animations/Trujcy1.gif
 
     
   #   - images/a_dot_ham.jpeg
