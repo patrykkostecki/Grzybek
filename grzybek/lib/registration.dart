@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grzybek/avatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grzybek/login_screen.dart';
+import 'package:grzybek/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'main.dart';
+import 'package:grzybek/avatar.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -64,12 +65,23 @@ class _RegistrationState extends State<Registration> {
         password: password,
       );
 
+      // Zapisz nazwę użytkownika w Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'username': username,
+        'email': email,
+        'avatar': _selectedAvatar,
+      });
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('username', username);
       await prefs.setInt('selected_avatar', _selectedAvatar);
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => SecondScreen()),
+        MaterialPageRoute(
+            builder: (_) => SecondScreen()), // Navigate to SecondScreen
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Rejestracja się powiodła')),
@@ -101,7 +113,6 @@ class _RegistrationState extends State<Registration> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Padding(padding: EdgeInsets.only(top: 50)),
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -140,30 +151,16 @@ class _RegistrationState extends State<Registration> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context)
-                      .push(
-                        MaterialPageRoute(
-                            builder: (_) => AvatarSelectionScreen()),
-                      )
+                      .push(MaterialPageRoute(
+                          builder: (_) => AvatarSelectionScreen()))
                       .then((_) => _loadSelectedAvatar());
                 },
                 child: Text('Wybierz awatara'),
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.brown),
-                ),
               ),
               SizedBox(height: 70),
-              TextButton(
+              ElevatedButton(
                 onPressed: _registerUser,
                 child: Text('Zarejestruj'),
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.brown),
-                ),
               ),
             ],
           ),

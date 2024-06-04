@@ -32,8 +32,8 @@ dependencies:
     sdk: flutter
   sqflite: ^2.0.0+3
   path_provider: ^2.0.2
-  firebase_core: ^2.27.0
-  firebase_auth: ^4.17.8
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.20.0
   flutter_riverpod: ^2.5.1
   tflite_flutter: ^0.10.4
   image_picker: ^1.0.8
@@ -52,6 +52,7 @@ dependencies:
   flutter_svg: ^2.0.4
   animated_text_kit: ^4.2.2
   shared_preferences: ^2.2.3
+  cloud_firestore: ^4.17.5
 
 dev_dependencies:
   flutter_test:
